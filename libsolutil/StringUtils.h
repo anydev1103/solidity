@@ -28,6 +28,7 @@
 #include <vector>
 
 #include <libsolutil/CommonData.h>
+#include <libsolutil/Numeric.h>
 
 namespace solidity::util
 {

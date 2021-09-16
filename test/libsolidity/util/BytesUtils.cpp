@@ -108,7 +108,7 @@ bytes BytesUtils::convertFixedPoint(string const& _literal, size_t& o_fractional
 		u256 value(valueInteger);
 		if (negative)
 			value = s2u(-u2s(value));
-		return util::toBigEndian(value);
+		return toBigEndian(value);
 	}
 	catch (std::exception const&)
 	{
@@ -193,7 +193,7 @@ string BytesUtils::formatHexString(bytes const& _bytes)
 {
 	stringstream os;
 
-	os << "hex\"" << toHex(_bytes) << "\"";
+	os << "hex\"" << util::toHex(_bytes) << "\"";
 
 	return os.str();
 }
@@ -266,7 +266,7 @@ string BytesUtils::formatRawBytes(
 	{
 		bytes byteRange{it, it + static_cast<long>(parameter.abiType.size)};
 
-		os << _linePrefix << byteRange;
+		os << _linePrefix << util::toHex(byteRange);
 		if (&parameter != &parameters.back())
 			os << endl;
 

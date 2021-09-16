@@ -1562,7 +1562,7 @@ public:
 		// The already encoded key-value pairs
 		ret += m_data;
 		// 16-bit big endian length
-		ret += util::toCompactBigEndian(size, 2);
+		ret += toCompactBigEndian(size, 2);
 		return ret;
 	}
 
