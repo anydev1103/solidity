@@ -207,6 +207,7 @@ protected:
 	void visitCryptoFunction(FunctionCall const& _funCall);
 	void visitGasLeft(FunctionCall const& _funCall);
 	virtual void visitAddMulMod(FunctionCall const& _funCall);
+	void visitWrapUnwrap(FunctionCall const& _funCall);
 	void visitObjectCreation(FunctionCall const& _funCall);
 	void visitTypeConversion(FunctionCall const& _funCall);
 	void visitStructConstructorCall(FunctionCall const& _funCall);

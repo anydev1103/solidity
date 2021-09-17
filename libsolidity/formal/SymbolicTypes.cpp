@@ -233,14 +233,18 @@ pair<bool, shared_ptr<SymbolicVariable>> newSymbolicVariable(
 	bool abstract = false;
 	shared_ptr<SymbolicVariable> var;
 	frontend::Type const* type = &_type;
-	if (!isSupportedTypeDeclaration(_type))
+
+	if (auto userType = dynamic_cast<UserDefinedValueType const*>(type))
+		type = &userType->underlyingType();
+
+	if (!isSupportedTypeDeclaration(*type))
 	{
 		abstract = true;
 		var = make_shared<SymbolicIntVariable>(frontend::TypeProvider::uint256(), type, _uniqueName, _context);
 	}
-	else if (isBool(_type))
+	else if (isBool(*type))
 		var = make_shared<SymbolicBoolVariable>(type, _uniqueName, _context);
-	else if (isFunction(_type))
+	else if (isFunction(*type))
 	{
 		auto const& fType = dynamic_cast<FunctionType const*>(type);
 		auto const& paramsIn = fType->parameterTypes();
@@ -263,39 +267,39 @@ pair<bool, shared_ptr<SymbolicVariable>> newSymbolicVariable(
 		else
 			var = make_shared<SymbolicFunctionVariable>(type, _uniqueName, _context);
 	}
-	else if (isInteger(_type))
+	else if (isInteger(*type))
 		var = make_shared<SymbolicIntVariable>(type, type, _uniqueName, _context);
-	else if (isFixedPoint(_type))
+	else if (isFixedPoint(*type))
 		var = make_shared<SymbolicIntVariable>(type, type, _uniqueName, _context);
-	else if (isFixedBytes(_type))
+	else if (isFixedBytes(*type))
 	{
 		auto fixedBytesType = dynamic_cast<frontend::FixedBytesType const*>(type);
 		solAssert(fixedBytesType, "");
 		var = make_shared<SymbolicFixedBytesVariable>(type, fixedBytesType->numBytes(), _uniqueName, _context);
 	}
-	else if (isAddress(_type) || isContract(_type))
+	else if (isAddress(*type) || isContract(*type))
 		var = make_shared<SymbolicAddressVariable>(_uniqueName, _context);
-	else if (isEnum(_type))
+	else if (isEnum(*type))
 		var = make_shared<SymbolicEnumVariable>(type, _uniqueName, _context);
-	else if (isRational(_type))
+	else if (isRational(*type))
 	{
-		auto rational = dynamic_cast<frontend::RationalNumberType const*>(&_type);
+		auto rational = dynamic_cast<frontend::RationalNumberType const*>(type);
 		solAssert(rational, "");
 		if (rational->isFractional())
 			var = make_shared<SymbolicIntVariable>(frontend::TypeProvider::uint256(), type, _uniqueName, _context);
 		else
 			var = make_shared<SymbolicIntVariable>(type, type, _uniqueName, _context);
 	}
-	else if (isMapping(_type) || isArray(_type))
+	else if (isMapping(*type) || isArray(*type))
 		var = make_shared<SymbolicArrayVariable>(type, type, _uniqueName, _context);
-	else if (isTuple(_type))
+	else if (isTuple(*type))
 		var = make_shared<SymbolicTupleVariable>(type, _uniqueName, _context);
-	else if (isStringLiteral(_type))
+	else if (isStringLiteral(*type))
 	{
 		auto stringType = TypeProvider::stringMemory();
 		var = make_shared<SymbolicArrayVariable>(stringType, type, _uniqueName, _context);
 	}
-	else if (isNonRecursiveStruct(_type))
+	else if (isNonRecursiveStruct(*type))
 		var = make_shared<SymbolicStructVariable>(type, _uniqueName, _context);
 	else
 		solAssert(false, "");

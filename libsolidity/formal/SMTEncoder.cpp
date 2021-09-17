@@ -641,6 +641,10 @@ void SMTEncoder::endVisit(FunctionCall const& _funCall)
 	case FunctionType::Kind::MulMod:
 		visitAddMulMod(_funCall);
 		break;
+	case FunctionType::Kind::Unwrap:
+	case FunctionType::Kind::Wrap:
+		visitWrapUnwrap(_funCall);
+		break;
 	case FunctionType::Kind::Send:
 	case FunctionType::Kind::Transfer:
 	{
@@ -844,6 +848,13 @@ void SMTEncoder::visitAddMulMod(FunctionCall const& _funCall)
 		defineExpr(_funCall, divModWithSlacks(x + y, k, intType).second);
 	else
 		defineExpr(_funCall, divModWithSlacks(x * y, k, intType).second);
+}
+
+void SMTEncoder::visitWrapUnwrap(FunctionCall const& _funCall)
+{
+	auto const& args = _funCall.arguments();
+	solAssert(args.size() == 1, "");
+	defineExpr(_funCall, expr(*args.front()));
 }
 
 void SMTEncoder::visitObjectCreation(FunctionCall const& _funCall)
